@@ -14,8 +14,8 @@ const init = async () => {
   spinner.src = chrome.extension.getURL('images/Ange.png');
   spinner.style.position = 'absolute';
   spinner.style.top = '0';
-  spinner.style.right = '10%';
-  spinner.style.height = '30%';
+  spinner.style.right = '15%';
+  spinner.style.height = '40%';
   chat.appendChild(spinner);
 
   const animation = spinner.animate([
@@ -30,7 +30,7 @@ const init = async () => {
   let numLatestChatMessages = 0;
   const updateRate = numAddedChatMessages => {
     numLatestChatMessages += numAddedChatMessages;
-    animation.playbackRate = numLatestChatMessages / 100;
+    animation.playbackRate = numLatestChatMessages / 30;
   };
 
   const observer = new MutationObserver(records => {
@@ -38,7 +38,7 @@ const init = async () => {
     const numChatMessages = nodes.filter(isChatMessage).length;
 
     updateRate(numChatMessages);
-    setTimeout(updateRate,30 * 1000, -numChatMessages);
+    setTimeout(updateRate,10 * 1000, -numChatMessages);
   });
 
   observer.observe(selector.chatItemsDom, {

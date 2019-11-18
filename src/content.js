@@ -1,9 +1,15 @@
 const selector = {
-  getChatDom: () => document.querySelector('yt-live-chat-app'),
+  chatItemsDom: document.querySelector('yt-live-chat-app'),
+  chatDom: document.getElementById('chat'),
+};
+
+const isChatMessage = node => {
+  const name = node.nodeName.toLowerCase();
+  return name === 'yt-live-chat-text-message-renderer' || name === 'yt-live-chat-paid-message-renderer';
 };
 
 const init = async () => {
-  const chat = document.getElementById('chat');
+  const chat = selector.chatDom;
   const spinner = document.createElement('img');
   spinner.src = chrome.extension.getURL('images/Ange.png');
   spinner.style.position = 'absolute';
@@ -21,30 +27,21 @@ const init = async () => {
     iterations: Infinity,
   });
 
-  let nChatMessagesWithinThirtySeconds = 0;
+  let numLatestChatMessages = 0;
+  const updateRate = numAddedChatMessages => {
+    numLatestChatMessages += numAddedChatMessages;
+    animation.playbackRate = numLatestChatMessages / 100;
+  };
 
   const observer = new MutationObserver(records => {
-    let nNodes = 0;
+    const nodes = records.flatMap(record => Array.from(record.addedNodes));
+    const numChatMessages = nodes.filter(isChatMessage).length;
 
-    records.forEach(record => {
-      record.addedNodes.forEach(node => {
-        const nodeName = node.nodeName.toLowerCase();
-        if (nodeName === 'yt-live-chat-text-message-renderer' || nodeName === 'yt-live-chat-paid-message-renderer') {
-          nNodes += 1;
-        }
-      });
-    });
-
-    nChatMessagesWithinThirtySeconds += nNodes;
-    animation.playbackRate = nChatMessagesWithinThirtySeconds / 100;
-
-    setTimeout(() => {
-      nChatMessagesWithinThirtySeconds -= nNodes;
-      animation.playbackRate = nChatMessagesWithinThirtySeconds / 100;
-    }, 30 * 1000);
+    updateRate(numChatMessages);
+    setTimeout(updateRate,30 * 1000, -numChatMessages);
   });
 
-  observer.observe(selector.getChatDom(), {
+  observer.observe(selector.chatItemsDom, {
     childList: true,
     subtree: true,
   });

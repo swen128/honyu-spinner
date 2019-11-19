@@ -5,7 +5,7 @@ YouTube のコメント速度に合わせてアンジュが高速回転する Ch
 
 [Chrome ウェブストア](https://chrome.google.com/webstore/detail/kiloenlppjkpkkkpjeffbgppflbfoepa)からインストールできます。
 
-![demo](https://i.imgur.com/BimWlo4.gif)
+![demo](https://raw.githubusercontent.com/swen128/honyu-spinner/readme-media/media/demo.gif)
 
 
 ## 注意事項
